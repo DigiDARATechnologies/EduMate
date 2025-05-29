@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduMate AI - Dashboard</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Progress Dashboard</h1>
+        <canvas id="progress-chart" width="400" height="200"></canvas>
+        <div id="weekly-report"></div>
+    </div>
+    <script>
+        async function loadProgress() {
+            const response = await fetch("/api/progress");
+            const data = await response.json();
+            const ctx = document.getElementById("progress-chart").getContext("2d");
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["Completed Topics", "Total Topics", "Time Spent (hrs)"],
+                    datasets: [{
+                        label: "Progress",
+                        data: [data.completed_topics, data.total_topics, parseInt(data.time_spent)],
+                        backgroundColor: ["#4CAF50", "#2196F3", "#FFC107"]
+                    }]
+                }
+            });
+            const report = document.getElementById("weekly-report");
+            report.innerHTML = `
+                <h2>Weekly Report</h2>
+                <p>Topics Covered: ${data.weekly_report.topics_covered}</p>
+                <p>Time Spent: ${data.weekly_report.time_spent}</p>
+                <p>Improvement: ${data.weekly_report.improvement}</p>
+            `;
+        }
+        loadProgress();
+    </script>
+</body>
+</html>

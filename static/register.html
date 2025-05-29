@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - EduMate AI</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h2>Register</h2>
+            <form id="registerForm">
+                <input type="text" id="name" placeholder="Name" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="tel" id="phone" placeholder="Phone (10 digits)" pattern="[0-9]{10}" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <input type="number" id="year" placeholder="Year (e.g., 1)" required>
+                <input type="text" id="department" placeholder="Department (e.g., CSE)" required>
+                <button type="submit">Register</button>
+            </form>
+            <p style="text-align: center; margin-top: 10px;">
+                Already have an account? <a href="/static/login.html" style="color: #6200ea;">Login</a>
+            </p>
+        </div>
+    </div>
+    <script src="/static/scripts.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const year = parseInt(document.getElementById('year').value);
+            const department = document.getElementById('department').value;
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, phone, password, year, department })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Registration successful! Please login.');
+                    window.location.href = '/static/login.html';
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                alert('Error registering: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

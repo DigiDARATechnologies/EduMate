@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduMate AI - Quiz</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script>
+        async function loadQuiz() {
+            const topic = document.getElementById("quiz-topic").value;
+            const response = await fetch("/api/quiz", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ topic })
+            });
+            const data = await response.json();
+            const quizContainer = document.getElementById("quiz-container");
+            quizContainer.innerHTML = "";
+            data.forEach((question, index) => {
+                quizContainer.innerHTML += `
+                    <div>
+                        <p>${index + 1}. ${question.question}</p>
+                        ${question.options.map(option => `
+                            <label>
+                                <input type="radio" name="q${index}" value="${option}">
+                                ${option}
+                            </label>
+                        `).join("")}
+                    </div>
+                `;
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Take a Quiz</h1>
+        <label for="quiz-topic">Select Topic:</label>
+        <select id="quiz-topic">
+            <option value="math">Math</option>
+            <option value="science">Science</option>
+        </select>
+        <button onclick="loadQuiz()">Start Quiz</button>
+        <div id="quiz-container"></div>
+    </div>
+</body>
+</html>

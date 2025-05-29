@@ -1,0 +1,11 @@
+{
+    "degree_program": "Computer Science",
+    "target_gpa": 3.8,
+    "career_goals": "Software Engineer",
+    "milestones": [
+        {"week": 1, "task": "Learn basic programming concepts"},
+        {"week": 2, "task": "Understand data structures"},
+        {"week": 3, "task": "Practice algorithms"},
+        {"week": 4, "task": "Build a small project"}
+    ]
+}

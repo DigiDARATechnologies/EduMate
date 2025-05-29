@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - EduMate AI</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>EduMate AI</h2>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be appended here -->
+        </div>
+        <div class="typing-indicator" id="typingIndicator">Typing...</div>
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Type your message..." onkeypress="if(event.key === 'Enter') sendMessage()">
+            <input type="file" id="fileInput" multiple accept=".pdf">
+            <label for="fileInput">Upload PDF</label>
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <script src="/static/scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/static/login.html';
+                return;
+            }
+
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                appendMessage('assistant', `Hi ${user.name}! I'm your teaching assistant. Your details: Email: ${user.email}, Phone: ${user.phone}, Year: ${user.year}, Department: ${user.department}. How can I help you today?`);
+            }
+
+            document.getElementById('messageInput').focus();
+        });
+
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const fileInput = document.getElementById('fileInput');
+            const message = messageInput.value.trim();
+            if (!message && fileInput.files.length === 0) return;
+
+            const token = localStorage.getItem('token');
+            appendMessage('user', message);
+            messageInput.value = '';
+            showTypingIndicator(true);
+
+            const formData = new FormData();
+            if (message) formData.append('message', message);
+            for (let file of fileInput.files) {
+                formData.append('files', file);
+            }
+            fileInput.value = '';
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    appendMessage('assistant', data.message, data.quick_replies);
+                } else if (response.status === 401) {
+                    alert('Session expired. Please login again.');
+                    logout();
+                } else {
+                    appendMessage('assistant', data.message || 'Error processing your request.');
+                }
+            } catch (error) {
+                appendMessage('assistant', 'Error: ' + error.message);
+            } finally {
+                showTypingIndicator(false);
+            }
+        }
+
+        function appendMessage(sender, message, quickReplies = []) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = message;
+            messageDiv.appendChild(contentDiv);
+
+            if (quickReplies.length > 0) {
+                const quickRepliesDiv = document.createElement('div');
+                quickRepliesDiv.className = 'quick-replies';
+                quickReplies.forEach(reply => {
+                    const button = document.createElement('button');
+                    button.className = 'quick-reply-btn';
+                    button.textContent = reply;
+                    button.onclick = () => {
+                        appendMessage('user', reply);
+                        sendQuickReply(reply);
+                    };
+                    quickRepliesDiv.appendChild(button);
+                });
+                messageDiv.appendChild(quickRepliesDiv);
+            }
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function sendQuickReply(reply) {
+            const token = localStorage.getItem('token');
+            showTypingIndicator(true);
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(reply)
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    appendMessage('assistant', data.message, data.quick_replies);
+                } else {
+                    appendMessage('assistant', data.message || 'Error processing your request.');
+                }
+            } catch (error) {
+                appendMessage('assistant', 'Error: ' + error.message);
+            } finally {
+                showTypingIndicator(false);
+            }
+        }
+
+        function showTypingIndicator(show) {
+            const typingIndicator = document.getElementById('typingIndicator');
+            typingIndicator.className = `typing-indicator ${show ? 'active' : ''}`;
+        }
+    </script>
+</body>
+</html>

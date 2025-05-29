@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduMate AI - Chat</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>EduMate AI</h1>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </header>
+    <main class="container">
+        <div class="chat-container">
+            <div id="chat-messages" class="chat-messages"></div>
+            <div id="typing-indicator" class="typing-indicator"></div>
+        </div>
+        <form id="chat-form" class="chat-form">
+            <input type="text" id="chat-input" placeholder="Ask me anything...">
+            <input type="file" id="file-input" accept=".pdf">
+            <label for="file-input">📎</label>
+            <button type="submit">Send</button>
+        </form>
+        <div id="quick-replies" class="quick-replies" style="display: none;">
+            <button class="yes" onclick="sendQuickReply('Yes')">Yes</button>
+            <button class="no" onclick="sendQuickReply('No')">No</button>
+        </div>
+        <div id="loading-chat" class="loading-chat"><div class="spinner"></div></div>
+    </main>
+    <script src="/static/scripts.js"></script>
+</body>
+</html>

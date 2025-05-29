@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "title": "Math Assignment 1",
+        "due_date": "2023-10-15",
+        "status": "pending"
+    },
+    {
+        "id": 2,
+        "title": "Programming Project",
+        "due_date": "2023-10-20",
+        "status": "in-progress"
+    }
+]

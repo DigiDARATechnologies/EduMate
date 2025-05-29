@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduMate AI - Chat</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="/static/js/chat.js" defer></script>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>EduMate AI</h1>
+            <div class="auth-links">
+                <a href="/logout">Logout</a> |
+                <a href="/register">Register</a>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Chat messages will be dynamically added here -->
+        </div>
+        <form class="chat-input" id="chat-form">
+            <input type="text" id="chat-input" placeholder="Type your message..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+</body>
+</html>
